@@ -3,7 +3,7 @@ package repositories
 import "github.com/wan6sta/go-url/internal/app/config"
 
 type Repositories interface {
-	CreateUrl(url string) (string, error)
+	CreateUrl(url string, baseUrl string) (string, error)
 	GetUrl(ID string) (string, error)
 }
 
@@ -17,7 +17,7 @@ func NewRepository(rs Repositories, cfg *config.Config) *Repository {
 }
 
 func (r *Repository) CreateUrl(url string) (string, error) {
-	return r.rs.CreateUrl(url)
+	return r.rs.CreateUrl(url, r.cfg.BaseUrl)
 }
 
 func (r *Repository) GetUrl(ID string) (string, error) {
