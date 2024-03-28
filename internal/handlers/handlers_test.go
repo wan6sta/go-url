@@ -40,7 +40,7 @@ func TestHandlers(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.True(t, strings.Contains(string(resBody), cfg.BaseURL))
-		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain")
+		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
 	})
 
 	t.Run("[GET] positive test #2", func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestHandlers(t *testing.T) {
 		assert.Equal(t, res.StatusCode, http.StatusTemporaryRedirect)
 		defer res.Body.Close()
 
-		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain")
+		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
 		assert.Equal(t, res.Header.Get("Location"), googleURL)
 	})
 

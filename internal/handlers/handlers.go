@@ -33,8 +33,7 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-	w.Header().Set("charset", "utf8")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
 	if r.Method == http.MethodGet {
 		id := strings.TrimPrefix(r.URL.Path, "/")
