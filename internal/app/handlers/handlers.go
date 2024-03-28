@@ -51,6 +51,7 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(url)
 
 		w.Header().Set("Location", url)
+		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
 
@@ -69,6 +70,7 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusCreated)
 		_, err = w.Write([]byte(id))
 		if err != nil {
