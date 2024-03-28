@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	UrlNotFound = errors.New("url not found")
+	ErrUrlNotFound = errors.New("url not found")
 )
 
 type Storage struct {
@@ -29,7 +29,7 @@ func (s *Storage) GetUrl(ID string) (string, error) {
 	url, ok := s.urls[ID]
 
 	if !ok {
-		return "", UrlNotFound
+		return "", ErrUrlNotFound
 	}
 
 	return url, nil

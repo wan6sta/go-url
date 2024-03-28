@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	AppBadRequestError = errors.New("bad request")
-	AppInternalError   = errors.New("internal server error")
+	ErrAppBadRequest = errors.New("bad request")
+	ErrAppInternal   = errors.New("internal server error")
 )
 
 type AppRepos interface {
@@ -29,7 +29,7 @@ func NewHandlers(r AppRepos) *Handlers {
 
 func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet && r.Method != http.MethodPost {
-		http.Error(w, AppBadRequestError.Error(), http.StatusBadRequest)
+		http.Error(w, ErrAppBadRequest.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -39,12 +39,12 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 
 		url, err := h.r.GetUrl(id)
 		if err != nil {
-			if errors.Is(err, storage.UrlNotFound) {
+			if errors.Is(err, storage.ErrUrlNotFound) {
 				http.Error(w, "URL не найден", http.StatusBadRequest)
 				return
 			}
 
-			http.Error(w, AppBadRequestError.Error(), http.StatusBadRequest)
+			http.Error(w, ErrAppBadRequest.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -57,7 +57,7 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		data, err := io.ReadAll(r.Body)
 		if err != nil {
-			http.Error(w, AppInternalError.Error(), http.StatusBadRequest)
+			http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
 			return
 		}
 
@@ -65,14 +65,14 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 
 		id, err := h.r.CreateUrl(url)
 		if err != nil {
-			http.Error(w, AppInternalError.Error(), http.StatusBadRequest)
+			http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
 		_, err = w.Write([]byte(id))
 		if err != nil {
-			http.Error(w, AppInternalError.Error(), http.StatusBadRequest)
+			http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
 			return
 		}
 	}
