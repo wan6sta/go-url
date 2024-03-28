@@ -33,9 +33,11 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("charset", "utf8")
+
 	if r.Method == http.MethodGet {
-		urls := strings.Split(r.URL.String(), "/")
-		id := urls[1]
+		id := strings.TrimPrefix(r.URL.Path, "/")
 
 		url, err := h.r.GetUrl(id)
 		if err != nil {
@@ -51,7 +53,6 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(url)
 
 		w.Header().Set("Location", url)
-		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
 
@@ -70,7 +71,6 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusCreated)
 		_, err = w.Write([]byte(id))
 		if err != nil {
