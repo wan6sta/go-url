@@ -17,12 +17,12 @@ func NewStorage() *Storage {
 	return &Storage{urls: make(map[string]string)}
 }
 
-func (s *Storage) CreateURL(URL string, baseUrl string) (string, error) {
+func (s *Storage) CreateURL(URL string, baseURL string) (string, error) {
 	ID := utils.GenerateID(6)
 
 	s.urls[ID] = URL
 
-	return baseUrl + "/" + ID, nil
+	return baseURL + "/" + ID, nil
 }
 
 func (s *Storage) GetURL(ID string) (string, error) {
