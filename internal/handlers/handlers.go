@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"github.com/wan6sta/go-url/internal/app/storage"
+	"github.com/wan6sta/go-url/internal/storage"
 	"io"
 	"net/http"
 	"strings"
@@ -15,8 +15,8 @@ var (
 )
 
 type AppRepos interface {
-	CreateUrl(url string) (string, error)
-	GetUrl(ID string) (string, error)
+	CreateURL(URL string) (string, error)
+	GetURL(ID string) (string, error)
 }
 
 type Handlers struct {
@@ -39,9 +39,9 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		id := strings.TrimPrefix(r.URL.Path, "/")
 
-		url, err := h.r.GetUrl(id)
+		URL, err := h.r.GetURL(id)
 		if err != nil {
-			if errors.Is(err, storage.ErrUrlNotFound) {
+			if errors.Is(err, storage.ErrURLNotFound) {
 				http.Error(w, "URL не найден", http.StatusBadRequest)
 				return
 			}
@@ -50,9 +50,9 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println(url)
+		fmt.Println(URL)
 
-		w.Header().Set("Location", url)
+		w.Header().Set("Location", URL)
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	}
 
@@ -63,9 +63,9 @@ func (h *Handlers) AppHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		url := string(data)
+		URL := string(data)
 
-		id, err := h.r.CreateUrl(url)
+		id, err := h.r.CreateURL(URL)
 		if err != nil {
 			http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
 			return

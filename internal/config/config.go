@@ -1,7 +1,7 @@
 package config
 
 type Config struct {
-	BaseUrl string
+	BaseURL string
 	HTTPServer
 }
 
@@ -12,7 +12,7 @@ type HTTPServer struct {
 
 func NewConfig() *Config {
 	return &Config{
-		BaseUrl: "http://localhost:8080",
+		BaseURL: "http://localhost:8080",
 		HTTPServer: HTTPServer{
 			Port: "8080",
 			Host: "http://localhost",

@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/wan6sta/go-url/internal/app/config"
-	"github.com/wan6sta/go-url/internal/app/handlers"
-	"github.com/wan6sta/go-url/internal/app/repositories"
-	"github.com/wan6sta/go-url/internal/app/server"
-	"github.com/wan6sta/go-url/internal/app/storage"
+	"github.com/wan6sta/go-url/internal/config"
+	"github.com/wan6sta/go-url/internal/handlers"
+	"github.com/wan6sta/go-url/internal/repositories"
+	"github.com/wan6sta/go-url/internal/server"
+	"github.com/wan6sta/go-url/internal/storage"
 	"net/http"
 )
 
