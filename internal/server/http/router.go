@@ -7,6 +7,7 @@ import (
 	"github.com/wan6sta/go-url/internal/handlers"
 	"github.com/wan6sta/go-url/internal/repositories"
 	"github.com/wan6sta/go-url/internal/storage"
+	"time"
 )
 
 type Router struct {
@@ -22,12 +23,13 @@ func NewRouter(cfg *config.Config) *Router {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.Timeout(60 * time.Second))
+	r.Use(middleware.AllowContentType("text/plain"))
 
 	r.Post("/", h.CreateUrlHandler)
+	r.Get("/{id}", h.GetUrlHandler)
 
-	r.Route("/{id}", func(r chi.Router) {
-		r.Get("/", h.GetUrlHandler)
-	})
+	r.MethodNotAllowed(h.NotAllowedHandler)
 
 	return &Router{
 		R: r,
