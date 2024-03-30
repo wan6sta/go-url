@@ -5,11 +5,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/wan6sta/go-url/internal/config"
-	"github.com/wan6sta/go-url/internal/repositories"
-	"github.com/wan6sta/go-url/internal/storage"
+	"github.com/wan6sta/go-url/internal/server"
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 )
@@ -18,19 +16,19 @@ const googleURL = "https://www.google.com"
 
 func TestHandlers(t *testing.T) {
 	cfg := config.NewConfig()
-	s := storage.NewStorage()
-	r := repositories.NewRepository(s, cfg)
-	h := NewHandlers(r)
+	serv := server.NewAppServer(cfg)
+	ts := serv.TS
+
 	var ID string
 
 	t.Run("[POST] positive test #1", func(t *testing.T) {
-		request := httptest.NewRequest(http.MethodPost, "/", bufio.NewReader(strings.NewReader(googleURL)))
-		w := httptest.NewRecorder()
-		h.AppHandler(w, request)
-		res := w.Result()
+		request, _ := http.NewRequest(http.MethodPost, "/", bufio.NewReader(strings.NewReader(googleURL)))
+
+		res, err := ts.Client().Do(request)
+		require.NoError(t, err)
+		defer res.Body.Close()
 
 		assert.Equal(t, res.StatusCode, http.StatusCreated)
-		defer res.Body.Close()
 
 		resBody, err := io.ReadAll(res.Body)
 		resSlice := strings.Split(string(resBody), "/")
@@ -44,39 +42,36 @@ func TestHandlers(t *testing.T) {
 	})
 
 	t.Run("[GET] positive test #2", func(t *testing.T) {
-		request := httptest.NewRequest(http.MethodGet, "/"+ID, nil)
-		w := httptest.NewRecorder()
-		h.AppHandler(w, request)
-		res := w.Result()
+		request, _ := http.NewRequest(http.MethodGet, "/"+ID, nil)
 
-		assert.Equal(t, res.StatusCode, http.StatusTemporaryRedirect)
+		res, err := ts.Client().Do(request)
+		require.NoError(t, err)
 		defer res.Body.Close()
 
+		assert.Equal(t, res.StatusCode, http.StatusTemporaryRedirect)
 		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
 		assert.Equal(t, res.Header.Get("Location"), googleURL)
 	})
 
 	t.Run("[GET] negative test #3", func(t *testing.T) {
-		request := httptest.NewRequest(http.MethodGet, "/", nil)
-		w := httptest.NewRecorder()
-		h.AppHandler(w, request)
-		res := w.Result()
+		request, _ := http.NewRequest(http.MethodGet, "/", nil)
 
-		assert.Equal(t, res.StatusCode, http.StatusBadRequest)
+		res, err := ts.Client().Do(request)
+		require.NoError(t, err)
 		defer res.Body.Close()
 
+		assert.Equal(t, res.StatusCode, http.StatusBadRequest)
 		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
 	})
 
 	t.Run("[PUT] negative test #4", func(t *testing.T) {
-		request := httptest.NewRequest(http.MethodPut, "/", nil)
-		w := httptest.NewRecorder()
-		h.AppHandler(w, request)
-		res := w.Result()
+		request, _ := http.NewRequest(http.MethodPut, "/", nil)
 
-		assert.Equal(t, res.StatusCode, http.StatusBadRequest)
+		res, err := ts.Client().Do(request)
+		require.NoError(t, err)
 		defer res.Body.Close()
 
+		assert.Equal(t, res.StatusCode, http.StatusBadRequest)
 		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
 	})
 }
