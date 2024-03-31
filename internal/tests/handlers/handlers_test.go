@@ -45,6 +45,8 @@ func TestHandlers(t *testing.T) {
 		resID := resSlice[len(resSlice)-1]
 		ID = resID
 
+		defer res.Body.Close()
+
 		assert.True(t, strings.Contains(string(resBody), cfg.BaseURL))
 		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
 	})
@@ -52,11 +54,15 @@ func TestHandlers(t *testing.T) {
 	t.Run("[GET] positive test #2", func(t *testing.T) {
 		res, _ := testRequest(t, ts, http.MethodGet, "/"+ID, nil)
 
+		defer res.Body.Close()
+
 		assert.Equal(t, res.StatusCode, http.StatusOK)
 	})
 
 	t.Run("[GET] negative test #3", func(t *testing.T) {
 		res, _ := testRequest(t, ts, http.MethodGet, "/123", nil)
+
+		defer res.Body.Close()
 
 		assert.Equal(t, res.StatusCode, http.StatusBadRequest)
 		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
@@ -64,6 +70,8 @@ func TestHandlers(t *testing.T) {
 
 	t.Run("[PUT] negative test #4", func(t *testing.T) {
 		res, _ := testRequest(t, ts, http.MethodPut, "/123", nil)
+
+		defer res.Body.Close()
 
 		assert.Equal(t, res.StatusCode, http.StatusBadRequest)
 		assert.Equal(t, res.Header.Get("Content-Type"), "text/plain; charset=utf-8")
