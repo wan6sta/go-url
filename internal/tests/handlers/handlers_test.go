@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/wan6sta/go-url/internal/config"
+	"github.com/wan6sta/go-url/internal/logger"
 	"github.com/wan6sta/go-url/internal/server"
 	"io"
 	"net/http"
@@ -31,7 +32,8 @@ func testRequest(t *testing.T, ts *httptest.Server, method, path string, body io
 
 func TestHandlers(t *testing.T) {
 	cfg := config.NewConfig()
-	serv := server.NewAppServer(cfg)
+	log := logger.NewLogger().Sl
+	serv := server.NewAppServer(cfg, log)
 	ts := serv.TS
 
 	var ID string
