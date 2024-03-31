@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/wan6sta/go-url/internal/storage"
 	"io"
+	"log/slog"
 	"net/http"
 )
 
@@ -19,11 +20,12 @@ type AppRepos interface {
 }
 
 type Handlers struct {
-	r AppRepos
+	r   AppRepos
+	log *slog.Logger
 }
 
-func NewHandlers(r AppRepos) *Handlers {
-	return &Handlers{r: r}
+func NewHandlers(r AppRepos, log *slog.Logger) *Handlers {
+	return &Handlers{r: r, log: log}
 }
 
 func (h *Handlers) GetURLHandler(w http.ResponseWriter, r *http.Request) {

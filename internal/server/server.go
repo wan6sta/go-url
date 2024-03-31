@@ -1,9 +1,9 @@
 package server
 
 import (
-	"fmt"
 	"github.com/wan6sta/go-url/internal/config"
 	httprouter "github.com/wan6sta/go-url/internal/server/http"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 )
@@ -11,23 +11,27 @@ import (
 type AppServer struct {
 	TS  *httptest.Server
 	Cfg *config.Config
+	log *slog.Logger
 }
 
-func NewAppServer(cfg *config.Config) *AppServer {
-	router := httprouter.NewRouter(cfg)
+func NewAppServer(cfg *config.Config, log *slog.Logger) *AppServer {
+	router := httprouter.NewRouter(cfg, log)
 	ts := httptest.NewServer(router.R)
 
 	return &AppServer{
 		TS:  ts,
 		Cfg: cfg,
+		log: log,
 	}
 }
 
 func (s *AppServer) Run() {
-	router := httprouter.NewRouter(s.Cfg)
-	fmt.Printf("server started: %s", s.Cfg.HTTPServer.Address)
+	router := httprouter.NewRouter(s.Cfg, s.log)
+
+	s.log.Info("server started", "address", s.Cfg.HTTPServer)
+
 	err := http.ListenAndServe(s.Cfg.HTTPServer.Address, router.R)
 	if err != nil {
-		panic(err)
+		s.log.Error("server stopped", err)
 	}
 }
