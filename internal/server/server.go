@@ -1,21 +1,32 @@
 package server
 
-import "net/http"
+import (
+	"fmt"
+	"github.com/wan6sta/go-url/internal/config"
+	httprouter "github.com/wan6sta/go-url/internal/server/http"
+	"net/http"
+	"net/http/httptest"
+)
 
-type AppServerMux struct {
-	AppMux *http.ServeMux
+type AppServer struct {
+	TS  *httptest.Server
+	Cfg *config.Config
 }
 
-type Handlers interface {
-	AppHandler(w http.ResponseWriter, r *http.Request)
+func NewAppServer(cfg *config.Config) *AppServer {
+	router := httprouter.NewRouter(cfg)
+	ts := httptest.NewServer(router.R)
+
+	return &AppServer{
+		TS:  ts,
+		Cfg: cfg,
+	}
 }
 
-func NewAppServerMux(h Handlers) *AppServerMux {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", h.AppHandler)
-
-	return &AppServerMux{
-		AppMux: mux,
+func (s *AppServer) Run() {
+	router := httprouter.NewRouter(s.Cfg)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", s.Cfg.HTTPServer.Port), router.R)
+	if err != nil {
+		panic(err)
 	}
 }

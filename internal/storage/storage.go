@@ -7,6 +7,7 @@ import (
 
 var (
 	ErrURLNotFound = errors.New("url not found")
+	ErrURLNotValid = errors.New("url not valid")
 )
 
 type Storage struct {
@@ -19,6 +20,10 @@ func NewStorage() *Storage {
 
 func (s *Storage) CreateURL(URL string, baseURL string) (string, error) {
 	ID := utils.GenerateID(6)
+
+	if URL == "" {
+		return "", ErrURLNotValid
+	}
 
 	s.urls[ID] = URL
 
