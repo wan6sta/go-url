@@ -26,7 +26,7 @@ func NewHandlers(r AppRepos) *Handlers {
 	return &Handlers{r: r}
 }
 
-func (h *Handlers) GetUrlHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) GetURLHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
 	ID := chi.URLParam(r, "id")
@@ -46,7 +46,7 @@ func (h *Handlers) GetUrlHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusTemporaryRedirect)
 }
 
-func (h *Handlers) CreateUrlHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) CreateURLHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
 	data, err := io.ReadAll(r.Body)

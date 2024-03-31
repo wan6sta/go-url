@@ -26,8 +26,8 @@ func NewRouter(cfg *config.Config) *Router {
 	r.Use(middleware.Timeout(60 * time.Second))
 	r.Use(middleware.AllowContentType("text/plain"))
 
-	r.Post("/", h.CreateUrlHandler)
-	r.Get("/{id}", h.GetUrlHandler)
+	r.Post("/", h.CreateURLHandler)
+	r.Get("/{id}", h.GetURLHandler)
 
 	r.MethodNotAllowed(h.NotAllowedHandler)
 
