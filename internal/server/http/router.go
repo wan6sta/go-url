@@ -1,8 +1,8 @@
 package httprouter
 
 import (
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/wan6sta/go-url/internal/config"
 	"github.com/wan6sta/go-url/internal/handlers"
 	"github.com/wan6sta/go-url/internal/repositories"

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"errors"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/wan6sta/go-url/internal/storage"
 	"io"
 	"net/http"
@@ -71,7 +71,7 @@ func (h *Handlers) CreateURLHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handlers) NotAllowedHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) NotAllowedHandler(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusBadRequest)
 }
