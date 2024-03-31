@@ -1,21 +1,31 @@
 package config
 
+import (
+	"flag"
+)
+
 type Config struct {
 	BaseURL string
 	HTTPServer
 }
 
 type HTTPServer struct {
-	Port string
-	Host string
+	Address string
 }
 
 func NewConfig() *Config {
+	var HTTPAddress string
+	var BaseURL string
+
+	flag.StringVar(&HTTPAddress, "a", "localhost:8080", "http server address")
+	flag.StringVar(&BaseURL, "b", "http://localhost:8080", "final url address")
+
+	flag.Parse()
+
 	return &Config{
-		BaseURL: "http://localhost:8080",
+		BaseURL: BaseURL,
 		HTTPServer: HTTPServer{
-			Port: "8080",
-			Host: "http://localhost",
+			Address: HTTPAddress,
 		},
 	}
 }

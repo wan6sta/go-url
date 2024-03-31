@@ -13,7 +13,6 @@ import (
 
 func main() {
 	cfg := config.NewConfig()
-	endpoint := fmt.Sprintf("%s:%s", cfg.HTTPServer.Host, cfg.HTTPServer.Port)
 	data := url.Values{}
 	fmt.Println("Введите длинный URL")
 
@@ -26,11 +25,11 @@ func main() {
 
 	data.Set("url", long)
 	client := &http.Client{}
-	request, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(data.Encode()))
+	request, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s", cfg.Address), strings.NewReader(data.Encode()))
 	if err != nil {
 		panic(err)
 	}
-	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Content-Type", "text/plain")
 	response, err := client.Do(request)
 	if err != nil {
 		panic(err)

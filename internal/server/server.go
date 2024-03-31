@@ -25,7 +25,8 @@ func NewAppServer(cfg *config.Config) *AppServer {
 
 func (s *AppServer) Run() {
 	router := httprouter.NewRouter(s.Cfg)
-	err := http.ListenAndServe(fmt.Sprintf(":%s", s.Cfg.HTTPServer.Port), router.R)
+	fmt.Printf("server started: %s", s.Cfg.HTTPServer.Address)
+	err := http.ListenAndServe(s.Cfg.HTTPServer.Address, router.R)
 	if err != nil {
 		panic(err)
 	}
