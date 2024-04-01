@@ -27,8 +27,8 @@ func NewRouter(cfg *config.Config, log *slog.Logger) *Router {
 	// r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
-	r.Use(middleware.AllowContentType("text/plain", "application/json"))
-	r.Use(hm.Log)
+	r.Use(middleware.AllowContentType("text/plain", "application/json", "application/x-gzip"))
+	r.Use(hm.LogAndGzip)
 
 	r.Post("/", h.CreateURLHandler)
 	r.Get("/{id}", h.GetURLHandler)
