@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"github.com/go-chi/chi/v5"
 	"github.com/wan6sta/go-url/internal/storage"
@@ -13,6 +15,14 @@ var (
 	ErrAppBadRequest = errors.New("bad request")
 	ErrAppInternal   = errors.New("internal server error")
 )
+
+type CreateURLRequest struct {
+	Url string `json:"url"`
+}
+
+type CreateURLResponse struct {
+	Result string `json:"result"`
+}
 
 type AppRepos interface {
 	CreateURL(URL string) (string, error)
@@ -73,7 +83,49 @@ func (h *Handlers) CreateURLHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handlers) CreateURLJSONHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	const op = "handlers.CreateURLJSONHandler"
+	var cr CreateURLRequest
+
+	var buf bytes.Buffer
+	_, err := buf.ReadFrom(r.Body)
+	if err != nil {
+		h.log.Info("cannot parse req.Body")
+		http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
+	}
+
+	err = json.Unmarshal(buf.Bytes(), &cr)
+	if err != nil {
+		h.log.Info("cannot unmarshal req.Body")
+		http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
+	}
+
+	id, err := h.r.CreateURL(cr.Url)
+	if err != nil {
+		http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+
+	result := CreateURLResponse{
+		Result: id,
+	}
+
+	res, err := json.Marshal(result)
+	if err != nil {
+		h.log.Info("cannot marshal result")
+		http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
+	}
+
+	_, err = w.Write(res)
+	if err != nil {
+		http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
 func (h *Handlers) NotAllowedHandler(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusBadRequest)
 }
