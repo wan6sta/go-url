@@ -17,7 +17,7 @@ var (
 )
 
 type CreateURLRequest struct {
-	Url string `json:"url"`
+	URL string `json:"url"`
 }
 
 type CreateURLResponse struct {
@@ -101,7 +101,7 @@ func (h *Handlers) CreateURLJSONHandler(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
 	}
 
-	id, err := h.r.CreateURL(cr.Url)
+	id, err := h.r.CreateURL(cr.URL)
 	if err != nil {
 		http.Error(w, ErrAppInternal.Error(), http.StatusBadRequest)
 		return
