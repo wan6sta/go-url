@@ -6,7 +6,8 @@ import (
 )
 
 type Config struct {
-	BaseURL string `yaml:"base_url" env:"BASE_URL"`
+	BaseURL     string `yaml:"base_url" env:"BASE_URL"`
+	StoragePath string `env:"FILE_STORAGE_PATH"`
 	HTTPServer
 }
 
@@ -19,6 +20,7 @@ func NewConfig() *Config {
 
 	var HTTPAddress string
 	var BaseURL string
+	var StoragePath string
 
 	err := cleanenv.ReadEnv(&cfg)
 	if err != nil {
@@ -27,6 +29,7 @@ func NewConfig() *Config {
 
 	flag.StringVar(&HTTPAddress, "a", "localhost:8080", "http server address")
 	flag.StringVar(&BaseURL, "b", "http://localhost:8080", "final url address")
+	flag.StringVar(&StoragePath, "f", "tmp/short-url-db.json", "storage path")
 
 	flag.Parse()
 
@@ -36,6 +39,10 @@ func NewConfig() *Config {
 
 	if cfg.BaseURL == "" {
 		cfg.BaseURL = BaseURL
+	}
+
+	if cfg.StoragePath == "" {
+		cfg.StoragePath = StoragePath
 	}
 
 	return &cfg
