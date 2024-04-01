@@ -97,7 +97,7 @@ func TestHandlers(t *testing.T) {
 	})
 
 	t.Run("[POST] JSON positive test #1", func(t *testing.T) {
-		req := handlers.CreateURLRequest{Url: googleURL}
+		req := handlers.CreateURLRequest{URL: googleURL}
 
 		r, err := json.Marshal(req)
 		if err != nil {

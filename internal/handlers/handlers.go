@@ -85,7 +85,6 @@ func (h *Handlers) CreateURLHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handlers) CreateURLJSONHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	const op = "handlers.CreateURLJSONHandler"
 	var cr CreateURLRequest
 
 	var buf bytes.Buffer
