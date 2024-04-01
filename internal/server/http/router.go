@@ -27,11 +27,13 @@ func NewRouter(cfg *config.Config, log *slog.Logger) *Router {
 	// r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
-	r.Use(middleware.AllowContentType("text/plain"))
+	r.Use(middleware.AllowContentType("text/plain", "application/json"))
 	r.Use(hm.Log)
 
 	r.Post("/", h.CreateURLHandler)
 	r.Get("/{id}", h.GetURLHandler)
+
+	r.Post("/api/shorten", h.CreateURLJSONHandler)
 
 	r.MethodNotAllowed(h.NotAllowedHandler)
 
