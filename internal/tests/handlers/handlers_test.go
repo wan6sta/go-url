@@ -49,20 +49,24 @@ func testJSONRequest(t *testing.T, ts *httptest.Server, method, path string, bod
 	return resp, string(respBody)
 }
 
-func testJSONAndContentEncodingGzipRequest(t *testing.T, ts *httptest.Server, method, path string, body io.Reader) (*http.Response, string) {
+func testJSONGzipRequest(t *testing.T, ts *httptest.Server, method, path string, body io.Reader) (*http.Response, string) {
 	req, err := http.NewRequest(method, ts.URL+path, body)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Content-Encoding", "gzip")
+	req.Header.Set("Accept-Encoding", "gzip")
 	require.NoError(t, err)
 
 	resp, err := ts.Client().Do(req)
 	require.NoError(t, err)
 	defer resp.Body.Close()
 
-	respBody, err := io.ReadAll(resp.Body)
+	zr, err := gzip.NewReader(resp.Body)
 	require.NoError(t, err)
 
-	return resp, string(respBody)
+	b, err := io.ReadAll(zr)
+	require.NoError(t, err)
+
+	return resp, string(b)
 }
 
 func testJSONAndAcceptEncodingGzipRequest(t *testing.T, ts *httptest.Server, method, path string, body io.Reader) (*http.Response, string) {
@@ -185,7 +189,7 @@ func TestHandlers(t *testing.T) {
 		err = zb.Close()
 		require.NoError(t, err)
 
-		res, resBody := testJSONAndContentEncodingGzipRequest(t, ts, http.MethodPost, "/api/shorten", buf)
+		res, resBody := testJSONGzipRequest(t, ts, http.MethodPost, "/api/shorten", buf)
 
 		assert.Equal(t, res.StatusCode, http.StatusCreated)
 
