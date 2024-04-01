@@ -17,7 +17,7 @@ type Router struct {
 }
 
 func NewRouter(cfg *config.Config, log *slog.Logger) *Router {
-	s := storage.NewStorage()
+	s := storage.NewStorage(cfg, log)
 	repos := repositories.NewRepository(s, cfg)
 	hm := middlewares.NewHTTPMiddlewares(log)
 	h := handlers.NewHandlers(repos, log)
